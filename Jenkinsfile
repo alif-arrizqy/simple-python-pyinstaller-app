@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'pip install -U pytest'
+                sh 'pip install --user pytest'
                 sh 'pytest sources/test_calc.py'
                 stash(name: 'test-results', includes: 'sources/test_calc.py')
             }
@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'pip install -U pyinstaller'
+                sh 'pip install --user pyinstaller'
                 sh 'pyinstaller --onefile sources/add2vals.py'
                 sleep time: 1, unit: 'MINUTES'
                 stash(name: 'deploy-results', includes: 'dist/*')
