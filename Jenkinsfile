@@ -12,18 +12,10 @@ pipeline {
             }
         }
         stage('Test') {
-            agent {
-                docker {
-                    image 'qnib/pytest'
-                }
-            }
             steps {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
-            }
-            post {
-                always {
-                    junit 'test-reports/results.xml'
-                }
+                sh 'pip install pytest'
+                sh 'pytest sources/test_calc.py'
+                stash(name: 'test-results', includes: 'sources/test_calc.py')
             }
         }
         stage('Approval') {
@@ -32,19 +24,11 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {
-                docker {
-                    image 'cdrx/pyinstaller-linux:python2'
-                }
-            }
             steps {
+                sh 'pip install pyinstaller'
                 sh 'pyinstaller --onefile sources/add2vals.py'
                 sleep time: 1, unit: 'MINUTES'
-            }
-            post {
-                success {
-                    archiveArtifacts 'dist/add2vals'
-                }
+                stash(name: 'deploy-results', includes: 'dist/*')
             }
         }
     }
