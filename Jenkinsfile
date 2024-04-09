@@ -33,6 +33,11 @@ pipeline {
             }
         }
         stage('Deploy') {
+            agent {
+                docker {
+                    image 'cdrx/pyinstaller-linux:latest'
+                }
+            }
             steps {
                 sh 'pyinstaller --onefile sources/add2vals.py'
                 sleep time: 1, unit: 'MINUTES'
