@@ -19,9 +19,12 @@ pipeline {
                 }
             }
             steps {
-                sh 'pip install --user pytest'
-                sh 'pytest sources/test_calc.py'
-                stash(name: 'test-results', includes: 'sources/test_calc.py')
+                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+            }
+            post {
+                always {
+                    junit 'test-reports/results.xml'
+                }
             }
         }
         stage('Approval') {
@@ -38,6 +41,12 @@ pipeline {
             steps {
                 sh 'pyinstaller --onefile sources/add2vals.py'
                 sleep time: 1, unit: 'MINUTES'
+                echo 'Pipeline has finished successfully.'
+            }
+            post {
+                success {
+                    archiveArtifacts 'dist/add2vals'
+                }
             }
         }
     }
