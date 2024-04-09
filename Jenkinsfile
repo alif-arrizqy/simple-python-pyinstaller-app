@@ -40,8 +40,6 @@ pipeline {
             }
             steps {
                 sh 'pyinstaller --onefile sources/add2vals.py'
-                sleep time: 1, unit: 'MINUTES'
-                echo 'Pipeline has finished successfully.'
             }
             post {
                 success {
