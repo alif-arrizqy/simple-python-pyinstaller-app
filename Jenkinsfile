@@ -1,8 +1,5 @@
 pipeline {
-    agent any
-    options {
-        skipStagesAfterUnstable()
-    }
+    agent none // Don't use any global agent
     stages {
         stage('Build') {
             agent {
@@ -36,11 +33,6 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {
-                docker {
-                    image 'cdrx/pyinstaller-linux:python3'
-                }
-            }
             steps {
                 sh 'pyinstaller --onefile sources/add2vals.py'
                 sleep time: 1, unit: 'MINUTES'
