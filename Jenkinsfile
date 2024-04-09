@@ -33,20 +33,10 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {
-                docker {
-                    image 'cdrx/pyinstaller-linux:python3'
-                }
-            }
             steps {
-                sh 'pyinstaller --onefile sources/add2vals.py'
+                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
                 sleep time: 1, unit: 'MINUTES'
-                echo 'Pipeline has finished successfully.'
-            }
-            post {
-                success {
-                    archiveArtifacts 'dist/add2vals'
-                }
+                stash(name: 'compiled-results', includes: 'sources/*.py*')
             }
         }
     }
