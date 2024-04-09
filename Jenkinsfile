@@ -34,9 +34,13 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                sh 'pyinstaller --onefile sources/add2vals.py'
                 sleep time: 1, unit: 'MINUTES'
-                stash(name: 'compiled-results', includes: 'sources/*.py*')
+            }
+            post {
+                success {
+                    archiveArtifacts 'dist/add2vals'
+                }
             }
         }
     }
